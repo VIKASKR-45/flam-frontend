@@ -4,8 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "start": "vite",
+    "dev": "concurrently \"node server/generate.js\" \"vite\"",
+    "start": "concurrently \"node server/generate.js\" \"vite\"",
+    "server": "node server/generate.js",
+    "client": "vite",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -22,7 +24,9 @@
   "devDependencies": {
     "@eslint/js": "^9.30.1",
     "@vitejs/plugin-react": "^4.6.0",
+    "concurrently": "^10.0.5",
     "eslint": "^9.30.1",
+    "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "vite": "^7.0.4"

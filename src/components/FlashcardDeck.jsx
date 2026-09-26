@@ -14,6 +14,13 @@ function FlashcardDeck({ cards }) {
     ? cards.filter((card) => results[card.id] === false)
     : cards;
 
+  function handleRestart() {
+    setResults({});
+    setRetryMode(false);
+    setCurrentIndex(0);
+    setFlipped(false);
+  }
+
   if (activeCards.length === 0 && retryMode) {
     return (
       <div className="state-message">
@@ -23,6 +30,7 @@ function FlashcardDeck({ cards }) {
 
         <div className="deck-actions">
           <button
+            type="button"
             onClick={() => {
               setRetryMode(false);
               setCurrentIndex(0);
@@ -32,7 +40,7 @@ function FlashcardDeck({ cards }) {
             Back to All Cards
           </button>
 
-          <button onClick={handleRestart}>
+          <button type="button" onClick={handleRestart}>
             🔄 Restart Deck
           </button>
         </div>
@@ -50,7 +58,7 @@ function FlashcardDeck({ cards }) {
 
     setFlipped(false);
 
-    if (currentIndex === activeCards.length - 1) {
+    if (currentIndex >= activeCards.length - 1) {
       setCurrentIndex(0);
     } else {
       setCurrentIndex((index) => index + 1);
@@ -60,7 +68,7 @@ function FlashcardDeck({ cards }) {
   function handleNext() {
     setFlipped(false);
 
-    if (currentIndex === activeCards.length - 1) {
+    if (currentIndex >= activeCards.length - 1) {
       setCurrentIndex(0);
     } else {
       setCurrentIndex((index) => index + 1);
@@ -81,13 +89,6 @@ function FlashcardDeck({ cards }) {
     setFlipped(false);
   }
 
-  function handleRestart() {
-    setResults({});
-    setRetryMode(false);
-    setCurrentIndex(0);
-    setFlipped(false);
-  }
-
   const knownCount = Object.values(results).filter(
     (value) => value === true
   ).length;
@@ -97,70 +98,82 @@ function FlashcardDeck({ cards }) {
   ).length;
 
   return (
-    <div>
-      <p>
-        {retryMode
-          ? `Retry Mode — Card ${currentIndex + 1} of ${activeCards.length}`
-          : `Card ${currentIndex + 1} of ${cards.length}`}
-      </p>
+    <div className="flashcard-deck">
+      <div className="deck-header">
+        <p className="card-counter">
+          {retryMode
+            ? `Retry Mode — Card ${currentIndex + 1} of ${activeCards.length}`
+            : `Card ${currentIndex + 1} of ${cards.length}`}
+        </p>
 
-      <p>
-        ✅ Known: {knownCount}
-        &nbsp;&nbsp;
-        ❌ Need Practice: {unknownCount}
-      </p>
+        <p className="score-counter">
+          ✅ Known: {knownCount}
+          &nbsp;&nbsp;
+          ❌ Need Practice: {unknownCount}
+        </p>
+      </div>
 
       <div
         className="flashcard"
         onClick={() => setFlipped((value) => !value)}
         role="button"
         tabIndex={0}
+        aria-label={`Flashcard: ${flipped ? 'Answer' : 'Question'}. Click or press Enter to flip.`}
+        aria-expanded={flipped}
         onKeyDown={(event) => {
           if (event.key === "Enter" || event.key === " ") {
             event.preventDefault();
             setFlipped((value) => !value);
           }
         }}
-        aria-label="Flashcard. Click to flip."
       >
-        <h2>{flipped ? "Answer" : "Question"}</h2>
+        <h2 className="card-type">{flipped ? "Answer" : "Question"}</h2>
 
-        <p>
+        <p className="card-text">
           {flipped
             ? currentCard.answer
             : currentCard.question}
         </p>
 
         <small className="flashcard-hint">
-          Click the card to flip
+          Click or press space/enter to flip
         </small>
       </div>
 
       {flipped && (
         <div className="answer-actions">
-          <button onClick={() => handleAnswer(true)}>
+          <button
+            type="button"
+            className="btn-know"
+            onClick={() => handleAnswer(true)}
+          >
             ✅ I Know
           </button>
 
-          <button onClick={() => handleAnswer(false)}>
+          <button
+            type="button"
+            className="btn-dont-know"
+            onClick={() => handleAnswer(false)}
+          >
             ❌ I Don't Know
           </button>
         </div>
       )}
 
       <div className="deck-actions">
-        <button onClick={handleNext}>
+        <button type="button" onClick={handleNext}>
           Next Card
         </button>
 
         {unknownCount > 0 && !retryMode && (
-          <button onClick={handleRetryWrong}>
-            🔄 Retry Wrong Cards
+          <button type="button" onClick={handleRetryWrong}>
+            🔁 Retry Wrong Cards ({unknownCount})
           </button>
         )}
 
         {retryMode && (
           <button
+            type="button"
             onClick={() => {
               setRetryMode(false);
               setCurrentIndex(0);
@@ -171,8 +184,8 @@ function FlashcardDeck({ cards }) {
           </button>
         )}
 
-        <button onClick={handleRestart}>
-          ↻ Restart Deck
+        <button type="button" onClick={handleRestart}>
+          🔄 Restart Deck
         </button>
       </div>
     </div>

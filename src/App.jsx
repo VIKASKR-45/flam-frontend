@@ -2,7 +2,7 @@ import { useRef, useState } from "react";
 import "./App.css";
 
 import PromptInput from "./components/PromptInput";
-import FlashcardDeck from "./components/FlashcardDeck";
+import ResultView from "./components/ResultView";
 import LoadingState from "./components/LoadingState";
 import ErrorState from "./components/ErrorState";
 
@@ -109,9 +109,7 @@ function App() {
         )}
 
         {result && !loading && !error && (
-          <section className="flashcard-section">
-            <FlashcardDeck cards={result.cards} />
-          </section>
+          <ResultView cards={result.cards} />
         )}
 
       </div>
